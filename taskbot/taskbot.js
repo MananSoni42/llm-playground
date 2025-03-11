@@ -107,8 +107,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Generate the prompt with task and output requirements
             const prompt = generatePrompt(taskDescription, outputFields);
 
-            console.log(prompt);
-            
             // Make API request
             const response = await fetchAPIResponse(apiUrl, authToken, prompt);
             
@@ -164,7 +162,7 @@ ${fieldDescriptions}
 
 Format your response as XML with each field wrapped in its own tag like this:
 <output>
-${outputFields.map(field => `  <${field.key}>VALUE</${field.key}>`).join('\n')}
+${outputFields.map(field => `  <${field.key}> ${field.description || 'value'} </${field.key}>`).join('\n')}
 </output>
 
 IMPORTANT: Only include the exact fields requested, with no additional text or explanation outside the <output> tags.`;
@@ -211,9 +209,6 @@ IMPORTANT: Only include the exact fields requested, with no additional text or e
     function parseOutput(text) {
 
         text = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
-
-        console.log('text', text)
-
 
         if (!text) return null;
         
