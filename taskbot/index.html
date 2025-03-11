@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskBot | AI Task Processor</title>
+    <link rel="stylesheet" href="taskbot-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>TaskBot</h1>
+            <p class="tagline">Complete tasks with structured AI outputs</p>
+            <a href="#" class="back-link"><i class="fas fa-arrow-left"></i> Back to Playground</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="app-description">
+            <p>TaskBot sends your task to an LLM API and returns structured output in a consistent format. Describe your task, specify the key-value pairs you want in the output, and TaskBot handles the rest.</p>
+        </div>
+        
+        <div class="two-column-layout">
+            <!-- Left Column: Configuration -->
+            <div class="input-column">
+                <div class="app-config">
+                    <h2>Configuration</h2>
+                    <form id="taskbot-config-form">
+                        <div class="form-group">
+                            <label for="api-url">API URL:</label>
+                            <input type="url" id="api-url" placeholder="https://api.example.com/v1/chat/completions" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="auth-token">Auth Token:</label>
+                            <input type="password" id="auth-token" placeholder="Your API auth token" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-description">Task Description:</label>
+                            <textarea id="task-description" placeholder="Describe the task you want the AI to complete..." rows="4" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Output Values:</label>
+                            <div id="output-fields">
+                                <div class="output-field">
+                                    <input type="text" class="output-key" placeholder="Key" required>
+                                    <input type="text" class="output-description" placeholder="Description (optional)">
+                                    <button type="button" class="remove-field"><i class="fas fa-times"></i></button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary" id="add-field-btn">+ Add Field</button>
+                        </div>
+                        
+                        <button type="submit" class="btn" id="submit-button">Process Task</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Right Column: Output -->
+            <div class="output-column">
+                <div class="output-container" id="output-container">
+                    <h2>Results</h2>
+                    <div class="status-container">
+                        <h3>Status <span id="status-indicator" class="status-waiting">Waiting for input</span></h3>
+                        <div class="status-log" id="status-log">
+                            <!-- Status messages will appear here -->
+                        </div>
+                    </div>
+                    
+                    <div class="result-container">
+                        <h3>Output</h3>
+                        <div class="output-table" id="output-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="output-result-tbody">
+                                    <!-- Results will be displayed here as table rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="output-json hidden" id="output-json">
+                            <!-- Raw JSON will be available here but hidden by default -->
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-small hidden" id="toggle-json-btn">
+                            <i class="fas fa-code"></i> Show Raw JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>TaskBot - AI Task Processor</p>
+            <p>Open Source Project</p>
+        </div>
+    </footer>
+
+    <script src="taskbot.js"></script>
+</body>
+</html>
