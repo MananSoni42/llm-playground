@@ -1,32 +1,63 @@
-.taskbot-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Two equal columns */
-  gap: 2rem;
-  padding: 2rem;
-  max-width: 1400px; /* Increased max-width for two columns */
-  margin: 0 auto;
-  height: calc(100vh - 4rem); /* Full viewport height minus padding */
-  overflow: hidden; /* Prevent overall scrolling */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-.taskbot-form {
-  background-color: rgba(255, 255, 255, 0.1); /* Frosted glass effect */
+/* Overall container for the entire page */
+.taskbot-container {
+  display: grid;
+  grid-template-rows: auto auto 1fr; /* Header, Back Link, Main Content */
+  gap: 1rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 100vh;
+}
+
+.back-link {
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 10;
+  position: relative;
+  grid-row: 1;
+}
+
+.App-header {
+  grid-row: 2;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+/* Grid for the main two columns */
+.main-content-grid {
+  grid-row: 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  overflow: hidden; /* Important to contain children */
+}
+
+/* Styling for the two main panels (form and right column) */
+.taskbot-form, .right-column {
+  background-color: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 1.5rem;
   border-radius: 12px;
+  overflow: hidden; /* This is key to making the rounded corners work with scrolling children */
   display: flex;
   flex-direction: column;
-  height: 100%; /* Take full height of its grid area */
+  gap: 1.5rem; /* Adds space between child elements */
+  padding: 1.5rem;
 }
 
 .taskbot-form .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0; /* Remove margin as parent flex has gap */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .taskbot-form label {
-  display: block;
-  margin-bottom: 0.5rem;
   font-weight: bold;
   text-align: left;
 }
@@ -40,16 +71,25 @@
   color: var(--text-color);
 }
 
+.output-field-wrapper {
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .output-field {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .output-field .form-control {
   flex: 1;
 }
 
+/* Buttons */
 .btn {
   padding: 0.75rem 1.5rem;
   border: none;
@@ -57,97 +97,76 @@
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease;
+  flex-shrink: 0;
 }
 
-.btn-primary {
-  background-color: #646cff;
-  color: white;
-}
+.btn-primary { background-color: #646cff; color: white; }
+.btn-danger { background-color: #ff6b6b; color: white; }
+.btn-success { background-color: #5cb85c; color: white; margin-top: auto; /* Push to bottom */ }
+.btn-secondary { background-color: #444; color: white; }
 
-.btn-danger {
-  background-color: #ff6b6b;
-  color: white;
-}
-
-.btn-success {
-  background-color: #5cb85c;
-  color: white;
-}
-
-.back-link {
-  display: block;
-  margin-bottom: 2rem;
-  color: var(--text-color);
-  text-decoration: none;
-  font-weight: bold;
-  grid-column: 1 / -1; /* Span across both columns */
+/* Right Column Layout */
+.right-column {
+  gap: 1rem;
 }
 
 .status-log {
-  margin-top: 1rem; /* Adjusted margin */
   padding: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.2); /* Darker glass */
-  flex-grow: 1; /* Take remaining space */
-  overflow-y: auto; /* Allow scrolling within the log */
+  background-color: rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
   text-align: left;
   font-family: 'Fira Code', monospace;
+  height: 200px; /* Give status a fixed height */
+  flex-shrink: 0;
 }
 
-.log-entry {
-  margin-bottom: 0.5rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.log-error {
-  color: #ff8c8c;
-}
-
-.log-success {
-  color: #a6ffb9;
-}
+.log-entry { margin-bottom: 0.5rem; color: rgba(255, 255, 255, 0.7); }
+.log-error { color: #ff8c8c; }
+.log-success { color: #a6ffb9; }
 
 .results-container {
-  margin-top: 1rem; /* Add space between logs and results */
   background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 1.5rem;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
-  height: 100%; /* Take full height of its grid area */
+  gap: 1rem;
+  flex-grow: 1;
+  overflow: hidden;
 }
 
 .results-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
 }
 
-.results-actions .btn {
-  margin-left: 1rem;
+.results-actions {
+  display: flex;
+  gap: 1rem;
 }
 
-.json-result {
-  background-color: rgba(0, 0, 0, 0.2); /* Darker glass */
+.json-result, .table-result-wrapper {
+  background-color: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   padding: 1rem;
-  text-align: left;
-  white-space: pre-wrap;
-  flex-grow: 1; /* Allow content to grow */
-  overflow-y: auto; /* Allow scrolling within results */
+  flex-grow: 1;
+  overflow: auto; /* Changed to auto for both directions */
   font-family: 'Fira Code', monospace;
+}
+
+.json-result {
+  white-space: pre-wrap;
+  text-align: left;
 }
 
 .table-result {
   width: 100%;
   border-collapse: collapse;
-  flex-grow: 1; /* Allow content to grow */
-  overflow-y: auto; /* Allow scrolling within results */
 }
 
 .table-result th, .table-result td {
@@ -157,52 +176,5 @@
 }
 
 .table-result th {
-  background-color: rgba(0, 0, 0, 0.2); /* Darker glass */
-}
-
-/* Adjustments for overall layout */
-.content {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.App-header {
-  grid-column: 1 / -1; /* Span across both columns */
-  margin-bottom: 2rem; /* Adjusted margin */
-}
-
-.main-content-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  height: 100%;
-}
-
-.taskbot-form, .right-column {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.taskbot-form button[type="submit"] {
-  margin-top: auto; /* Push submit button to the bottom */
-}
-
-.output-field-wrapper {
-  flex-grow: 1;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-}
-
-.output-field-wrapper .form-group {
-  margin-bottom: 0.5rem;
-}
-
-.output-field-wrapper .btn-primary {
-  margin-top: 1rem;
-}
-
-.output-field-wrapper .output-field {
-  margin-bottom: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.2);
 }

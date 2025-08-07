@@ -2,21 +2,22 @@ import { useEffect } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import TaskBot from './TaskBot';
+import TaskBotBatch from './TaskBotBatch';
 
 const projects = [
   {
     name: 'TaskBot',
-    description: 'Send your task to any LLM API and get predictable, structured output',
+    description: 'Connect to any LLM, define your output, and get structured data for any task.',
     path: '/taskbot'
   },
   {
     name: 'TaskBot Batch',
-    description: 'A batch version of the TaskBot.',
-    path: '/taskbot_batch'
+    description: 'Process a CSV of inputs against an LLM in a single batch operation.',
+    path: '/taskbot-batch'
   },
   {
     name: 'Talk to Character',
-    description: 'A project that lets you talk to your favorite book characters.',
+    description: 'Talk to your favourite book characters, immerse in their universe',
     path: '/talk_to_character'
   },  
 ];
@@ -63,6 +64,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/taskbot" element={<TaskBot />} />
+        <Route path="/taskbot-batch" element={<TaskBotBatch />} />
       </Routes>
     </div>
   );

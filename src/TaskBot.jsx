@@ -12,6 +12,17 @@ function TaskBot() {
   const [isJsonVisible, setIsJsonVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleCopyJson = async () => {
+    if (resultData) {
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(resultData, null, 2));
+        logMessage('JSON copied to clipboard!', 'success');
+      } catch (err) {
+        logMessage('Failed to copy JSON: ' + err, 'error');
+      }
+    }
+  };
+
   const addField = () => {
     setOutputFields([...outputFields, { key: '', description: '' }]);
   };
@@ -120,7 +131,7 @@ ${outputFields.map(field => `  <${field.key}>${field.description || 'value'}</${
       <Link to="/" className="back-link"> &larr; Back to Home</Link>
       <header className="App-header">
         <h1>TaskBot</h1>
-        <p>Your personal AI assistant for structured data extraction.</p>
+        <p>TaskBot empowers you to connect to any LLM API and transform unstructured text into predictable, structured data. Simply describe the task, define the output fields you need, and TaskBot will handle the rest, ensuring you get consistent, machine-readable results every time.</p>
       </header>
 
       <div className="main-content-grid">
@@ -194,7 +205,7 @@ ${outputFields.map(field => `  <${field.key}>${field.description || 'value'}</${
                   <button className="btn btn-secondary" onClick={() => setIsJsonVisible(!isJsonVisible)}>
                     {isJsonVisible ? 'Show Table' : 'Show JSON'}
                   </button>
-                  <button className="btn btn-secondary">Copy JSON</button>
+                  <button className="btn btn-secondary" onClick={handleCopyJson}>Copy JSON</button>
                 </div>
               </div>
 
