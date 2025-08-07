@@ -1,11 +1,27 @@
 .taskbot-container {
-  max-width: 800px;
-  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two equal columns */
+  gap: 2rem;
   padding: 2rem;
+  max-width: 1400px; /* Increased max-width for two columns */
+  margin: 0 auto;
+  height: calc(100vh - 4rem); /* Full viewport height minus padding */
+  overflow: hidden; /* Prevent overall scrolling */
+}
+
+.taskbot-form {
+  background-color: rgba(255, 255, 255, 0.1); /* Frosted glass effect */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Take full height of its grid area */
 }
 
 .taskbot-form .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .taskbot-form label {
@@ -18,9 +34,9 @@
 .taskbot-form .form-control {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid var(--card-border);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  background-color: var(--card-background);
+  background-color: rgba(255, 255, 255, 0.1);
   color: var(--text-color);
 }
 
@@ -64,29 +80,44 @@
   color: var(--text-color);
   text-decoration: none;
   font-weight: bold;
+  grid-column: 1 / -1; /* Span across both columns */
 }
 
 .status-log {
-  margin-top: 2rem;
+  margin-top: 1rem; /* Adjusted margin */
   padding: 1rem;
-  border: 1px solid var(--card-border);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  background-color: var(--card-background);
-  max-height: 200px;
-  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.2); /* Darker glass */
+  flex-grow: 1; /* Take remaining space */
+  overflow-y: auto; /* Allow scrolling within the log */
   text-align: left;
+  font-family: 'Fira Code', monospace;
 }
 
 .log-entry {
   margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .log-error {
-  color: #ff6b6b;
+  color: #ff8c8c;
+}
+
+.log-success {
+  color: #a6ffb9;
 }
 
 .results-container {
-  margin-top: 2rem;
+  margin-top: 1rem; /* Add space between logs and results */
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Take full height of its grid area */
 }
 
 .results-header {
@@ -101,25 +132,77 @@
 }
 
 .json-result {
-  background-color: var(--card-background);
-  border: 1px solid var(--card-border);
+  background-color: rgba(0, 0, 0, 0.2); /* Darker glass */
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   padding: 1rem;
   text-align: left;
   white-space: pre-wrap;
+  flex-grow: 1; /* Allow content to grow */
+  overflow-y: auto; /* Allow scrolling within results */
+  font-family: 'Fira Code', monospace;
 }
 
 .table-result {
   width: 100%;
   border-collapse: collapse;
+  flex-grow: 1; /* Allow content to grow */
+  overflow-y: auto; /* Allow scrolling within results */
 }
 
 .table-result th, .table-result td {
   padding: 0.75rem;
-  border: 1px solid var(--card-border);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   text-align: left;
 }
 
 .table-result th {
-  background-color: var(--card-background);
+  background-color: rgba(0, 0, 0, 0.2); /* Darker glass */
+}
+
+/* Adjustments for overall layout */
+.content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.App-header {
+  grid-column: 1 / -1; /* Span across both columns */
+  margin-bottom: 2rem; /* Adjusted margin */
+}
+
+.main-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  height: 100%;
+}
+
+.taskbot-form, .right-column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.taskbot-form button[type="submit"] {
+  margin-top: auto; /* Push submit button to the bottom */
+}
+
+.output-field-wrapper {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.output-field-wrapper .form-group {
+  margin-bottom: 0.5rem;
+}
+
+.output-field-wrapper .btn-primary {
+  margin-top: 1rem;
+}
+
+.output-field-wrapper .output-field {
+  margin-bottom: 0.5rem;
 }

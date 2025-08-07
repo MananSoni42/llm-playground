@@ -35,16 +35,16 @@ function TaskBot() {
     setResultData(null);
 
     const logMessage = (message, type = 'info') => {
-      setLog(prevLog => [...prevLog, { message, type }]);
-    };
+        setLog(prevLog => [...prevLog, { message, type }]);
+      };
 
-    const filledOutputFields = outputFields.filter(field => field.key.trim() !== '');
+      const filledOutputFields = outputFields.filter(field => field.key.trim() !== '');
 
-    if (filledOutputFields.length === 0) {
-      logMessage('Error: At least one output field is required', 'error');
-      setIsLoading(false);
-      return;
-    }
+      if (filledOutputFields.length === 0) {
+        logMessage('Error: At least one output field is required', 'error');
+        setIsLoading(false);
+        return;
+      }
 
     const generatePrompt = (taskDescription, outputFields) => {
       const fieldDescriptions = outputFields.map(field => {
@@ -123,99 +123,105 @@ ${outputFields.map(field => `  <${field.key}>${field.description || 'value'}</${
         <p>Your personal AI assistant for structured data extraction.</p>
       </header>
 
-      <form className="taskbot-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="api-url">API URL</label>
-          <input type="text" id="api-url" className="form-control" value={apiUrl} onChange={(e) => setApiUrl(e.target.value)} />
-        </div>
+      <div className="main-content-grid">
+        <form className="taskbot-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="api-url">API URL</label>
+            <input type="text" id="api-url" className="form-control" value={apiUrl} onChange={(e) => setApiUrl(e.target.value)} />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="auth-token">Auth Token</label>
-          <input type="password" id="auth-token" className="form-control" value={authToken} onChange={(e) => setAuthToken(e.target.value)} />
-        </div>
+          <div className="form-group">
+            <label htmlFor="auth-token">Auth Token</label>
+            <input type="password" id="auth-token" className="form-control" value={authToken} onChange={(e) => setAuthToken(e.target.value)} />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="task-description">Task Description</label>
-          <textarea id="task-description" className="form-control" rows="3" value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)}></textarea>
-        </div>
+          <div className="form-group">
+            <label htmlFor="task-description">Task Description</label>
+            <textarea id="task-description" className="form-control" rows="3" value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)}></textarea>
+          </div>
 
-        <div className="form-group">
-          <label>Output Fields</label>
-          {outputFields.map((field, index) => (
-            <div className="output-field" key={index}>
-              <input
-                type="text"
-                name="key"
-                className="form-control"
-                placeholder="Key"
-                value={field.key}
-                onChange={(e) => handleFieldChange(index, e)}
-              />
-              <input
-                type="text"
-                name="description"
-                className="form-control"
-                placeholder="Description (optional)"
-                value={field.description}
-                onChange={(e) => handleFieldChange(index, e)}
-              />
-              <button type="button" className="btn btn-danger" onClick={() => removeField(index)}>
-                &times;
-              </button>
+          <div className="form-group">
+            <label>Output Fields</label>
+            <div className="output-field-wrapper">
+              {outputFields.map((field, index) => (
+                <div className="output-field" key={index}>
+                  <input
+                    type="text"
+                    name="key"
+                    className="form-control"
+                    placeholder="Key"
+                    value={field.key}
+                    onChange={(e) => handleFieldChange(index, e)}
+                  />
+                  <input
+                    type="text"
+                    name="description"
+                    className="form-control"
+                    placeholder="Description (optional)"
+                    value={field.description}
+                    onChange={(e) => handleFieldChange(index, e)}
+                  />
+                  <button type="button" className="btn btn-danger" onClick={() => removeField(index)}>
+                    &times;
+                  </button>
+                </div>
+              ))}
             </div>
-          ))}
-          <button type="button" className="btn btn-primary" onClick={addField}>
-            Add Field
+            <button type="button" className="btn btn-primary" onClick={addField}>
+              Add Field
+            </button>
+          </div>
+
+          <button type="submit" className="btn btn-success" disabled={isLoading}>
+            {isLoading ? 'Processing...' : 'Process Task'}
           </button>
-        </div>
+        </form>
 
-        <button type="submit" className="btn btn-success" disabled={isLoading}>
-          {isLoading ? 'Processing...' : 'Process Task'}
-        </button>
-      </form>
-
-      <div className="status-log">
-        {log.map((entry, index) => (
-          <div key={index} className={`log-entry log-${entry.type}`}>
-            {entry.message}
+        <div className="right-column">
+          <div className="status-log">
+            {log.map((entry, index) => (
+              <div key={index} className={`log-entry log-${entry.type}`}>
+                {entry.message}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {resultData && (
-        <div className="results-container">
-          <div className="results-header">
-            <h2>Results</h2>
-            <div className="results-actions">
-              <button className="btn btn-secondary" onClick={() => setIsJsonVisible(!isJsonVisible)}>
-                {isJsonVisible ? 'Show Table' : 'Show JSON'}
-              </button>
-              <button className="btn btn-secondary">Copy JSON</button>
+          {resultData && (
+            <div className="results-container">
+              <div className="results-header">
+                <h2>Results</h2>
+                <div className="results-actions">
+                  <button className="btn btn-secondary" onClick={() => setIsJsonVisible(!isJsonVisible)}>
+                    {isJsonVisible ? 'Show Table' : 'Show JSON'}
+                  </button>
+                  <button className="btn btn-secondary">Copy JSON</button>
+                </div>
+              </div>
+
+              {isJsonVisible ? (
+                <pre className="json-result">{JSON.stringify(resultData, null, 2)}</pre>
+              ) : (
+                <table className="table-result">
+                  <thead>
+                    <tr>
+                      <th>Key</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(resultData).map(([key, value]) => (
+                      <tr key={key}>
+                        <td>{key}</td>
+                        <td>{value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
-          </div>
-
-          {isJsonVisible ? (
-            <pre className="json-result">{JSON.stringify(resultData, null, 2)}</pre>
-          ) : (
-            <table className="table-result">
-              <thead>
-                <tr>
-                  <th>Key</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(resultData).map(([key, value]) => (
-                  <tr key={key}>
-                    <td>{key}</td>
-                    <td>{value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
