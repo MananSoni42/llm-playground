@@ -7,15 +7,43 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusLog = document.getElementById('status-log');
     const outputResultTbody = document.getElementById('output-result-tbody');
     const outputJson = document.getElementById('output-json');
+    const jsonContent = document.getElementById('json-content');
     const toggleJsonBtn = document.getElementById('toggle-json-btn');
+    const copyResultsBtn = document.getElementById('copy-results-btn');
     const statusIndicator = document.getElementById('status-indicator');
+    const clearLogBtn = document.getElementById('clear-log');
+    const outputTable = document.getElementById('output-table');
+    const noResults = document.getElementById('no-results');
+    const togglePasswordBtn = document.getElementById('toggle-password');
     
     // State
     let resultData = null;
+    let isJsonVisible = false;
     
     // Add field button handler
     addFieldBtn.addEventListener('click', function() {
         addOutputField();
+    });
+    
+    // Clear log button handler
+    clearLogBtn.addEventListener('click', function() {
+        clearLog();
+    });
+    
+    // Toggle password visibility
+    togglePasswordBtn.addEventListener('click', function() {
+        const authToken = document.getElementById('auth-token');
+        const icon = togglePasswordBtn.querySelector('i');
+        
+        if (authToken.type === 'password') {
+            authToken.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            authToken.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
     });
     
     // Remove field button handler (delegation)
@@ -33,30 +61,42 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Toggle JSON view
-    if (toggleJsonBtn) {
-        toggleJsonBtn.addEventListener('click', function() {
-            const isHidden = outputJson.classList.contains('hidden');
-            
-            if (isHidden) {
-                outputJson.classList.remove('hidden');
-                toggleJsonBtn.innerHTML = '<i class="fas fa-table"></i> Show Table View';
-            } else {
-                outputJson.classList.add('hidden');
-                toggleJsonBtn.innerHTML = '<i class="fas fa-code"></i> Show Raw JSON';
-            }
-        });
-    }
+    toggleJsonBtn.addEventListener('click', function() {
+        isJsonVisible = !isJsonVisible;
+        
+        if (isJsonVisible) {
+            outputJson.classList.remove('d-none');
+            toggleJsonBtn.innerHTML = '<i class="fas fa-table me-1"></i> Show Table View';
+        } else {
+            outputJson.classList.add('d-none');
+            toggleJsonBtn.innerHTML = '<i class="fas fa-code me-1"></i> Show Raw JSON';
+        }
+    });
+    
+    // Copy results
+    copyResultsBtn.addEventListener('click', function() {
+        if (!resultData) return;
+        
+        const jsonStr = JSON.stringify(resultData, null, 2);
+        navigator.clipboard.writeText(jsonStr)
+            .then(() => {
+                const originalText = copyResultsBtn.innerHTML;
+                copyResultsBtn.innerHTML = '<i class="fas fa-check me-1"></i> Copied!';
+                setTimeout(() => {
+                    copyResultsBtn.innerHTML = originalText;
+                }, 2000);
+            })
+            .catch(err => {
+                logMessage(`Error copying: ${err}`, 'error');
+            });
+    });
     
     // Form submission
     taskbotForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        clearLog();
-        outputResultTbody.innerHTML = '';
-        outputJson.innerHTML = '';
-        toggleJsonBtn.classList.add('hidden');
-        
-        updateStatus('processing');
+        resetUI();
+        updateStatus('processing', 'Processing request');
         
         const apiUrl = document.getElementById('api-url').value;
         const authToken = document.getElementById('auth-token').value;
@@ -78,22 +118,22 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (outputKeyValues.length === 0) {
             logMessage('Error: At least one output field is required', 'error');
-            updateStatus('error');
+            updateStatus('error', 'Error');
             return;
         }
         
         submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Processing...';
         
         try {
             await processTask(apiUrl, authToken, taskDescription, outputKeyValues);
-            updateStatus('success');
+            updateStatus('success', 'Completed successfully');
         } catch (error) {
             logMessage(`Error: ${error.message}`, 'error');
-            updateStatus('error');
+            updateStatus('error', 'Error');
         } finally {
             submitButton.disabled = false;
-            submitButton.innerHTML = 'Process Task';
+            submitButton.innerHTML = '<i class="fas fa-play me-1"></i> Process Task';
         }
     });
     
@@ -136,7 +176,12 @@ document.addEventListener('DOMContentLoaded', function() {
             resultData = parsedData;
             displayTableResult(parsedData);
             displayJsonResult(parsedData);
-            toggleJsonBtn.classList.remove('hidden');
+            toggleJsonBtn.classList.remove('d-none');
+            copyResultsBtn.classList.remove('d-none');
+            
+            // Show results
+            noResults.classList.add('d-none');
+            outputTable.classList.remove('d-none');
             
         } catch (error) {
             if (attemptNum < maxAttempts) {
@@ -207,12 +252,12 @@ IMPORTANT: Only include the exact fields requested, with no additional text or e
     
     // Parse XML output
     function parseOutput(text) {
-
-        text = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
-
         if (!text) return null;
         
         try {
+            // Remove any thinking tags if present
+            text = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+            
             // Extract XML between <output> tags
             const outputMatch = text.match(/<output>([\s\S]*?)<\/output>/i);
             
@@ -266,11 +311,10 @@ IMPORTANT: Only include the exact fields requested, with no additional text or e
             const row = document.createElement('tr');
             
             const keyCell = document.createElement('td');
-            keyCell.className = 'field-key';
+            keyCell.className = 'fw-bold';
             keyCell.textContent = key;
             
             const valueCell = document.createElement('td');
-            valueCell.className = 'field-value';
             valueCell.textContent = value;
             
             row.appendChild(keyCell);
@@ -283,19 +327,30 @@ IMPORTANT: Only include the exact fields requested, with no additional text or e
     // Display raw JSON result
     function displayJsonResult(data) {
         const json = JSON.stringify(data, null, 2);
-        outputJson.textContent = json;
+        jsonContent.textContent = json;
     }
     
     // Add a new output field
     function addOutputField() {
         const newField = document.createElement('div');
-        newField.className = 'output-field';
+        newField.className = 'output-field row g-2 mb-2';
         newField.innerHTML = `
-            <input type="text" class="output-key" placeholder="Key" required>
-            <input type="text" class="output-description" placeholder="Description (optional)">
-            <button type="button" class="remove-field"><i class="fas fa-times"></i></button>
+            <div class="col-5">
+                <input type="text" class="form-control output-key" placeholder="Key" required>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control output-description" placeholder="Description (optional)">
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-danger remove-field">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
         `;
         outputFields.appendChild(newField);
+        
+        // Focus the new input
+        newField.querySelector('.output-key').focus();
     }
     
     // Log a message to the status log
@@ -304,36 +359,72 @@ IMPORTANT: Only include the exact fields requested, with no additional text or e
         entry.className = `log-entry log-${type}`;
         
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        entry.textContent = `[${time}] ${message}`;
+        
+        let icon = '';
+        switch(type) {
+            case 'info':
+                icon = '<i class="fas fa-info-circle me-1"></i>';
+                break;
+            case 'success':
+                icon = '<i class="fas fa-check-circle me-1"></i>';
+                break;
+            case 'error':
+                icon = '<i class="fas fa-exclamation-circle me-1"></i>';
+                break;
+            case 'warning':
+                icon = '<i class="fas fa-exclamation-triangle me-1"></i>';
+                break;
+        }
+        
+        entry.innerHTML = `${icon}<span class="text-muted">[${time}]</span> ${message}`;
         
         statusLog.appendChild(entry);
         statusLog.scrollTop = statusLog.scrollHeight;
     }
     
     // Update status indicator
-    function updateStatus(status) {
-        statusIndicator.className = '';
-        statusIndicator.classList.add(`status-${status}`);
+    function updateStatus(status, text) {
+        statusIndicator.className = 'badge';
         
         switch(status) {
             case 'waiting':
-                statusIndicator.textContent = 'Waiting for input';
+                statusIndicator.classList.add('bg-secondary');
                 break;
             case 'processing':
-                statusIndicator.textContent = 'Processing request';
+                statusIndicator.classList.add('bg-primary', 'status-processing');
                 break;
             case 'success':
-                statusIndicator.textContent = 'Completed successfully';
+                statusIndicator.classList.add('bg-success');
                 break;
             case 'error':
-                statusIndicator.textContent = 'Error';
+                statusIndicator.classList.add('bg-danger');
                 break;
         }
+        
+        statusIndicator.textContent = text;
     }
     
     // Clear the log
     function clearLog() {
         statusLog.innerHTML = '';
-        logMessage('Starting task processing...', 'info');
+        logMessage('System ready. Enter a task description and click "Process Task".', 'info');
     }
+    
+    // Reset UI for new task
+    function resetUI() {
+        clearLog();
+        outputResultTbody.innerHTML = '';
+        jsonContent.textContent = '';
+        outputJson.classList.add('d-none');
+        toggleJsonBtn.classList.add('d-none');
+        copyResultsBtn.classList.add('d-none');
+        noResults.classList.remove('d-none');
+        outputTable.classList.add('d-none');
+        isJsonVisible = false;
+        toggleJsonBtn.innerHTML = '<i class="fas fa-code me-1"></i> Show Raw JSON';
+        resultData = null;
+    }
+    
+    // Initialize
+    // logMessage('System ready. Enter a task description and click "Process Task".', 'info');
 });

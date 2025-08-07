@@ -4,105 +4,387 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskBot | AI Task Processor</title>
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../common/styles.css">
-    <link rel="stylesheet" href="taskbot-styles.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="taskbot-styles.css">
 </head>
 <body>
-    <header>
+    <!-- Header -->
+    <header class="bg-primary text-white py-4">
         <div class="container">
-            <!-- <center>
-                <img src="../taskbot/logo.png" alt="TaskBot">
-            </center> -->
-            <h1>TaskBot</h1>
-            <p class="tagline">Send your task to any LLM (API) and get consistent, structued output</p>
-            <a href="../index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Playground</a>
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="mb-0">
+                        <i class="fas fa-robot me-2"></i>TaskBot
+                    </h1>
+                    <p class="mb-2">Send your task to any LLM API and get consistent, structured output</p>
+                </div>
+                <div class="col-auto">
+                    <a href="../index.html" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Playground
+                    </a>
+                </div>
+            </div>
         </div>
     </header>
 
-    <main class="container">
-        
-        <div class="two-column-layout">
-            <!-- Left Column: Configuration -->
-            <div class="input-column">
-                <div class="app-config">
-                    <h2>Configuration</h2>
-                    <form id="taskbot-config-form">
-                        <div class="form-group">
-                            <label for="api-url">API URL:</label>
-                            <input type="url" id="api-url" placeholder="https://api.example.com/v1/chat/completions" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="auth-token">Auth Token:</label>
-                            <input type="password" id="auth-token" placeholder="Your API auth token">
-                        </div>
-                        <div class="form-group">
-                            <label for="task-description">Task Description:</label>
-                            <textarea id="task-description" placeholder="Describe the task you want the AI to complete..." rows="4" required></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Output Values:</label>
-                            <div id="output-fields">
-                                <div class="output-field">
-                                    <input type="text" class="output-key" placeholder="Key" required>
-                                    <input type="text" class="output-description" placeholder="Description (optional)">
-                                    <button type="button" class="remove-field"><i class="fas fa-times"></i></button>
+    <main class="container py-4">
+        <!-- Quick Start Templates -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                <h5 class="mb-0">Quick Start Templates</h5>
+                <div>
+                    <span class="badge bg-info text-dark ms-2">New</span>
+                    <button class="btn btn-sm btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#templatesCollapse">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="collapse show" id="templatesCollapse">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="template-card h-100" data-template="summarize">
+                                <div class="card h-100 template-item">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="fas fa-file-alt text-primary me-2"></i>
+                                            Summarize Text
+                                        </h6>
+                                        <p class="card-text small">Extract key points from text into a structured format</p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0">
+                                        <button type="button" class="btn btn-sm btn-outline-primary w-100">Use Template</button>
+                                    </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-secondary" id="add-field-btn">+ Add Field</button>
                         </div>
-                        
-                        <button type="submit" class="btn" id="submit-button">Process Task</button>
-                    </form>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="template-card h-100" data-template="contact">
+                                <div class="card h-100 template-item">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="fas fa-address-card text-success me-2"></i>
+                                            Extract Contact Info
+                                        </h6>
+                                        <p class="card-text small">Parse contact details from emails or text</p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0">
+                                        <button type="button" class="btn btn-sm btn-outline-success w-100">Use Template</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="template-card h-100" data-template="sentiment">
+                                <div class="card h-100 template-item">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="fas fa-chart-bar text-warning me-2"></i>
+                                            Sentiment Analysis
+                                        </h6>
+                                        <p class="card-text small">Analyze text for sentiment and emotional tone</p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0">
+                                        <button type="button" class="btn btn-sm btn-outline-warning w-100">Use Template</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="template-card h-100" data-template="product">
+                                <div class="card h-100 template-item">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="fas fa-shopping-cart text-danger me-2"></i>
+                                            Product Data
+                                        </h6>
+                                        <p class="card-text small">Extract structured product information</p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0">
+                                        <button type="button" class="btn btn-sm btn-outline-danger w-100">Use Template</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examples (Collapsed by default) -->
+        <!-- <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                <h5 class="mb-0">Examples</h5>
+                <button class="btn btn-sm btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#examplesCollapse">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="collapse" id="examplesCollapse">
+                <div class="card-body">
+                    <div class="example-item mb-3 p-3 border rounded">
+                        <h6>Summarize Article</h6>
+                        <p>Extract key points from text into a structured format</p>
+                    </div>
+                    <div class="example-item mb-3 p-3 border rounded">
+                        <h6>Extract Information</h6>
+                        <p>Parse specific details from unstructured content</p>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="row g-4">
+            <!-- Left Column: Configuration -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="taskbot-config-form">
+                            <!-- API URL with model selection -->
+                            <div class="mb-3">
+                                <label for="api-url" class="form-label">API URL:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="fas fa-link"></i>
+                                    </span>
+                                    <input type="url" class="form-control" id="api-url" 
+                                        placeholder="https://api.example.com/v1/chat/completions" required>
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Models
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#" data-api="https://api.openai.com/v1/chat/completions">OpenAI</a></li>
+                                        <li><a class="dropdown-item" href="#" data-api="https://api.anthropic.com/v1/messages">Anthropic</a></li>
+                                        <li><a class="dropdown-item" href="#" data-api="https://api.groq.com/openai/v1/chat/completions">Groq</a></li>
+                                    </ul>
+                                </div>
+                                <div class="form-text">The API endpoint for your preferred LLM provider</div>
+                            </div>
+                            
+                            <!-- Auth Token -->
+                            <div class="mb-3">
+                                <label for="auth-token" class="form-label">Auth Token:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="fas fa-key"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="auth-token" 
+                                        placeholder="Your API auth token">
+                                    <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">Your API authentication token (securely stored in your browser)</div>
+                            </div>
+                            
+                            <!-- Task Description -->
+                            <div class="mb-3">
+                                <label for="task-description" class="form-label">Task Description:</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text bg-light">
+                                        <i class="fas fa-tasks"></i>
+                                    </span>
+                                    <textarea class="form-control" id="task-description" rows="4" 
+                                        placeholder="Describe the task you want the AI to complete..." required></textarea>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <div class="form-text">Be specific about what you want the AI to do</div>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="clear-task-btn">
+                                        <i class="fas fa-eraser me-1"></i>Clear
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Input Text (Optional) -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label for="input-text" class="form-label mb-0">Input Text (Optional):</label>
+                                    <button class="btn btn-sm btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#inputTextCollapse">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                                <div class="collapse" id="inputTextCollapse">
+                                    <textarea class="form-control" id="input-text" rows="4" 
+                                        placeholder="Paste the text you want to process here..."></textarea>
+                                    <div class="form-text">Text that will be processed by the AI</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Output Values -->
+                            <div class="mb-3">
+                                <label class="form-label">Output Values:</label>
+                                <div id="output-fields" class="mb-2">
+                                    <div class="output-field row g-2 mb-2">
+                                        <div class="col-5">
+                                            <input type="text" class="form-control output-key" placeholder="Key" required>
+                                        </div>
+                                        <div class="col">
+                                            <input type="text" class="form-control output-description" placeholder="Description (optional)">
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="button" class="btn btn-danger remove-field">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-outline-secondary" id="add-field-btn">
+                                        <i class="fas fa-plus me-1"></i> Add Field
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" id="clear-fields-btn">
+                                        <i class="fas fa-trash me-1"></i> Clear All
+                                    </button>
+                                </div>
+                                <div class="form-text">Define the structure of the data you want returned</div>
+                            </div>
+
+                            <!-- Advanced Options -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label class="form-label mb-0">Advanced Options:</label>
+                                    <button class="btn btn-sm btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#advancedOptionsCollapse">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                                <div class="collapse" id="advancedOptionsCollapse">
+                                    <div class="card card-body bg-light">
+                                        <div class="mb-3">
+                                            <label for="temperature" class="form-label">Temperature:</label>
+                                            <div class="d-flex align-items-center">
+                                                <input type="range" class="form-range flex-grow-1 me-2" id="temperature" min="0" max="1" step="0.1" value="0.3">
+                                                <span id="temperature-value">0.3</span>
+                                            </div>
+                                            <div class="form-text">Lower values = more consistent results</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="retry-count" class="form-label">Max Retries:</label>
+                                            <input type="number" class="form-control" id="retry-count" min="1" max="5" value="3">
+                                            <div class="form-text">Number of API call retries if parsing fails</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-primary" id="submit-button">
+                                    <i class="fas fa-play me-1"></i> Process Task
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
             
-            <!-- Right Column: Output -->
-            <div class="output-column">
-                <div class="output-container" id="output-container">
-                    <h2>Results</h2>
-                    <div class="status-container">
-                        <h3>Status <span id="status-indicator" class="status-waiting">Waiting for input</span></h3>
-                        <div class="status-log" id="status-log">
-                            <!-- Status messages will appear here -->
-                        </div>
+            <!-- Right Column: Results -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                        <h5 class="mb-0">Results</h5>
+                        <span class="badge bg-secondary" id="status-indicator">Waiting for input</span>
                     </div>
-                    
-                    <div class="result-container">
-                        <h3>Output</h3>
-                        <div class="output-table" id="output-table">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Field</th>
-                                        <th>Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="output-result-tbody">
-                                    <!-- Results will be displayed here as table rows -->
-                                </tbody>
-                            </table>
+                    <div class="card-body">
+                        <!-- Processing Log -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0">Processing Log</h6>
+                                <button class="btn btn-sm btn-outline-secondary" id="clear-log">
+                                    <i class="fas fa-eraser me-1"></i> Clear
+                                </button>
+                            </div>
+                            <div class="status-log p-2 border rounded bg-light" id="status-log">
+                                <div class="log-entry text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    System ready. Enter a task description and click "Process Task".
+                                </div>
+                            </div>
                         </div>
-                        <div class="output-json hidden" id="output-json">
-                            <!-- Raw JSON will be available here but hidden by default -->
+                        
+                        <!-- Result Table -->
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0">Output</h6>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button id="refresh-btn" class="btn btn-outline-secondary d-none">
+                                        <i class="fas fa-sync-alt me-1"></i> Refresh
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="result-container p-3 border rounded bg-light" id="result-container">
+                                <div id="no-results" class="py-5 text-center">
+                                    <i class="fas fa-database fa-3x text-secondary mb-3"></i>
+                                    <p class="mb-0 text-muted">No results yet</p>
+                                </div>
+                                <div id="output-table" class="d-none">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Field</th>
+                                                    <th>Value</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="output-result-tbody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Result Actions -->
+                            <div class="d-flex justify-content-between mt-3">
+                                <div>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary d-none" id="toggle-json-btn">
+                                        <i class="fas fa-code me-1"></i> Show Raw JSON
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-success d-none" id="copy-results-btn">
+                                        <i class="fas fa-copy me-1"></i> Copy Results
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary d-none" id="download-results-btn">
+                                        <i class="fas fa-download me-1"></i> Download
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- JSON Display -->
+                            <div class="json-view p-3 border rounded bg-dark text-light mt-3 d-none" id="output-json">
+                                <pre class="mb-0"><code id="json-content"></code></pre>
+                            </div>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-small hidden" id="toggle-json-btn">
-                            <i class="fas fa-code"></i> Show Raw JSON
-                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer>
+    <footer class="bg-light py-3 mt-5">
         <div class="container">
-            <p>TaskBot - AI Task Processor</p>
-            <p>Open Source Project</p>
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">TaskBot - AI Task Processor | Open Source Project</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="#" class="text-decoration-none text-muted me-3">Documentation</a>
+                    <a href="#" class="text-decoration-none text-muted me-3">GitHub</a>
+                    <a href="#" class="text-decoration-none text-muted">Report Issue</a>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
     <script src="taskbot.js"></script>
 </body>
 </html>

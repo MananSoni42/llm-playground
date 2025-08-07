@@ -4,79 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Playground</title>
-    <link rel="stylesheet" href="./common/styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="common/styles.css">
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1>LLM Playground</h1>
-            <p class="tagline">Useful LLM applications (or rabbit holes) that seem interesting to me!</p>
-        </div>
+        <h1>LLM Playground</h1>
     </header>
-
-    <main class="container">
-        <section class="app-grid">
-            <div class="app-card">
-                <center>
-                    <img src="./taskbot/logo.png" alt="TaskBot">
-                </center>
-                <h3>Task Bot</h3>
-                <p>Send your task to any LLM and get consistent, structued output</p>
-                <a href="./taskbot/index.html" class="btn">Try It <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="app-card">
-                <center>
-                    <img src="./taskbot/logo.png" alt="TaskBot">
-                </center>
-                <h3>Task Bot [batch]</h3>
-                <p>Submit a task along with multiple inputs as CSV to any LLM and get structured outputs back in your CSV</p>
-                <a href="./taskbot_batch/index.html" class="btn">Try It <i class="fas fa-arrow-right"></i></a>
-            </div>
+    <main>
+        <section class="project-list">
+            <a href="talk_to_character/index.html" class="project-card">
+                <h2>Talk to a Character</h2>
+                <p>Engage in conversations with your favorite fictional characters.</p>
+            </a>
+            <a href="taskbot/index.html" class="project-card">
+                <h2>TaskBot</h2>
+                <p>Automate your tasks with the help of an intelligent assistant.</p>
+            </a>
+            <a href="taskbot_batch/index.html" class="project-card">
+                <h2>TaskBot Batch</h2>
+                <p>Process multiple tasks at once with the batch version of TaskBot.</p>
+            </a>
         </section>
     </main>
-
-    <footer>
-        <div class="container">
-            <p>View this project on <a href="https://github.com/manansoni42/llm-playground">GitHub</a></p>
-        </div>
-    </footer>
-
-    <script>
-        // Wait for the DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add animation when scrolling to app cards
-            const appCards = document.querySelectorAll('.app-card');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = 1;
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            appCards.forEach(card => {
-                card.style.opacity = 0;
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                observer.observe(card);
-            });
-            
-            // Add event listeners for app cards
-            appCards.forEach(card => {
-                const btn = card.querySelector('.btn');
-                
-                card.addEventListener('mouseenter', () => {
-                    btn.style.backgroundColor = 'var(--secondary-color)';
-                });
-                
-                card.addEventListener('mouseleave', () => {
-                    btn.style.backgroundColor = 'var(--primary-color)';
-                });
-            });
-        });
-    </script>
 </body>
 </html>
