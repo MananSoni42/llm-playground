@@ -1,2 +1,40 @@
-.DS_STORE
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependency directories
+node_modules/
+dist/
+dist-ssr/
+
+# Testing
+/coverage/
+
+# Misc
+.DS_Store
+*.local
+*.pem
+
+# Local environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor directories and files (example for VS Code)
+.vscode/
+!.vscode/extensions.json # Keep extensions.json for team collaboration on recommended extensions
+.idea/
+
+# Build artifacts (if not already covered by dist/)
+build/
+
+# Vercel specific files (if deploying to Vercel)
+.vercel/
 

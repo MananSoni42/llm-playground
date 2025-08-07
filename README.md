@@ -1,34 +1,12 @@
-# llm-playground
+# React + Vite
 
-An interactive playground for LLM related rabbit holes (and occassionally useful applications)
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Access at: [manansoni42.github.io/llm-playground/](https://manansoni42.github.io/llm-playground/)
+Currently, two official plugins are available:
 
-# Apps
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 1 - TaskBot
-Send your task to any LLM and get output in a consistent structured format
+## Expanding the ESLint configuration
 
-### Features
-- Easy, simple GUI to define the task and the required outputs
-- Works with any LLM, no need for structured output support
-- Provides output in JSON format, gracefully handling parsing and automatic retry mechanisms
-
-### Example
-![taskbot_eg](/static/1-taskbot-screenshot.png)
-
-## 2 - TaskBot \[Batch\]
-Submit a task along with multiple inputs as CSV to any LLM and get structured outputs back in your CSV
-
-### Features
-- Easy, simple GUI to define the task and the required outputs
-- Provides an LLM generated editable prompt template based on your task and the available data columns
-- Easy to track progress
-- Provides a downloadable output file, with columns for each of the selected outputs
-
-### Example
-TODO
-
-## License
-
-GNU GPLv3
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

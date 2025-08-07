@@ -1,0 +1,121 @@
+:root {
+  --background-color: #1a1a1a;
+  --text-color: #f0f0f0;
+  --card-background: #2a2a2a;
+  --card-border: #444;
+  --card-hover-border: #646cff;
+  --header-text-color: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #121212; /* Dark background for the body */
+  color: var(--text-color);
+}
+
+.App {
+  text-align: center;
+  padding: 2rem;
+  background-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.interactive-background, .interactive-background2, .interactive-background3 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.interactive-background::before, .interactive-background2::before, .interactive-background3::before {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  top: var(--mouse-y, 50%);
+  left: var(--mouse-x, 50%);
+}
+
+.interactive-background::before {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(100, 108, 255, 0.25) 0%, rgba(100, 108, 255, 0) 70%);
+  transition: top 0.1s ease-out, left 0.1s ease-out;
+}
+
+.interactive-background2::before {
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(173, 216, 230, 0.15) 0%, rgba(173, 216, 230, 0) 70%);
+  transition: top 0.3s ease-out, left 0.3s ease-out;
+}
+
+.interactive-background3::before {
+  width: 900px;
+  height: 900px;
+  background: radial-gradient(circle, rgba(255, 105, 180, 0.1) 0%, rgba(255, 105, 180, 0) 70%);
+  transition: top 0.6s ease-out, left 0.6s ease-out;
+}
+
+.App-header {
+  margin-bottom: 4rem;
+}
+
+.App-header h1 {
+  font-size: 3.5rem;
+  color: var(--header-text-color);
+  margin-bottom: 0.5rem;
+}
+
+.App-header p {
+  font-size: 1.2rem;
+  color: #aaa;
+}
+
+.project-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.project-card {
+  background-color: var(--card-background);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 2rem;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  text-align: left;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--card-hover-border);
+}
+
+.project-card h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: var(--header-text-color);
+}
+
+.project-card p {
+  font-size: 1rem;
+  color: #ccc;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}
