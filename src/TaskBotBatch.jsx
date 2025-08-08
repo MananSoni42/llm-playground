@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import Papa from 'papaparse';
 import './TaskBotBatch.css';
+import ProjectHeader from './ProjectHeader';
 
 function TaskBotBatch({ apiConfig }) {
   const [taskDescription, setTaskDescription] = useState('Extract the output below from the provided text');
@@ -249,12 +249,10 @@ Provide your response in XML format like this:
 
   return (
     <div className="taskbot-batch-container">
-      <Link to="/" className="back-link"> &larr; Back to Home</Link>
-      <header className="App-header">
-        <h1>TaskBot [Batch]</h1>
-        <p>Take TaskBot's power to the next level. Upload a CSV file containing multiple inputs, and TaskBot Batch will process each row against your configured LLM task. The results are added to the original data and can be downloaded as a new CSV, making it ideal for large-scale data enrichment and processing.</p>
-      </header>
-
+      <ProjectHeader 
+        title="TaskBot [Batch]"
+        description="Process a CSV of inputs against an LLM in a single batch operation."
+      />
       <div className="main-content-grid">
         <form className="taskbot-form" onSubmit={handleSubmit}>
           <div className="form-content-wrapper">
@@ -273,14 +271,14 @@ Provide your response in XML format like this:
                 <div className="output-field" key={index}>
                   <input type="text" name="key" className="form-control" placeholder="Key" value={field.key} onChange={(e) => handleOutputFieldChange(index, e)} required />
                   <input type="text" name="description" className="form-control" placeholder="Description (optional)" value={field.description} onChange={(e) => handleOutputFieldChange(index, e)} />
-                  {outputFields.length > 1 && <button type="button" className="btn btn-danger" onClick={() => removeOutputField(index)}>&times;</button>}
+                  {outputFields.length > 1 && <button type="button" className="remove-button" onClick={() => removeOutputField(index)}>&times;</button>}
                 </div>
               ))}
-              <button type="button" className="btn btn-primary" onClick={addOutputField}>+ Add Field</button>
+              <button type="button" className="glass-button add-field-button" onClick={addOutputField}>+ Add Field</button>
             </div>
           </div>
 
-          <button type="submit" className="btn btn-success" disabled={isProcessing || csvData.length === 0 || !apiConfig}>
+          <button type="submit" className="glass-button-glow submit-button" disabled={isProcessing || csvData.length === 0 || !apiConfig}>
             {isProcessing ? `Processing... ${progress}%` : 'Process Batch'}
           </button>
         </form>
@@ -291,7 +289,7 @@ Provide your response in XML format like this:
               <div className="template-container">
                 <div className="form-group">
                   <label htmlFor="prompt-template">Generate prompt template (editable):</label>
-                  <button type="button" className="btn btn-primary" onClick={handleGenerateTemplate} disabled={isSuggesting || !csvFile || !taskDescription || !apiConfig}>
+                  <button type="button" className="glass-button generate-button" onClick={handleGenerateTemplate} disabled={isSuggesting || !csvFile || !taskDescription || !apiConfig}>
                     {isSuggesting ? 'Generating...' : 'Generate Prompt Template'}
                   </button>
                   <textarea id="prompt-template" className="form-control" rows="10" value={promptTemplate} onChange={(e) => setPromptTemplate(e.target.value)}></textarea>
@@ -321,7 +319,7 @@ Provide your response in XML format like this:
                     </tbody>
                   </table>
                 </div>
-                <button type="button" className="btn btn-primary" onClick={downloadProcessedCsv}>Download Processed CSV</button>
+                <button type="button" className="glass-button" onClick={downloadProcessedCsv}>Download Processed CSV</button>
               </div>
             )}
           </div>

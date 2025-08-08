@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import './TaskBot.css';
+import ProjectHeader from './ProjectHeader';
 
 function TaskBot({ apiConfig }) {
   const [taskDescription, setTaskDescription] = useState('');
@@ -11,7 +11,7 @@ function TaskBot({ apiConfig }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const logMessage = useCallback((message, type = 'info') => {
-    setLog(prevLog => [...prevLog, { message, type }]);
+    setLog(prevLog => [{ message, type }, ...prevLog]);
   }, []);
 
   useEffect(() => {
@@ -129,7 +129,8 @@ ${outputFields.map(field => `  <${field.key}>${field.description || 'value'}</${
       setResultData(result);
       logMessage('Successfully processed task!', 'success');
 
-    } catch (error) {
+    } catch (error)
+{
       logMessage(`Error: ${error.message}`, 'error');
     } finally {
       setIsLoading(false);
@@ -138,12 +139,10 @@ ${outputFields.map(field => `  <${field.key}>${field.description || 'value'}</${
 
   return (
     <div className="content taskbot-container">
-      <Link to="/" className="back-link"> &larr; Back to Home</Link>
-      <header className="App-header">
-        <h1>TaskBot</h1>
-        <p>TaskBot empowers you to connect to any LLM API and transform unstructured text into predictable, structured data. Simply describe the task, define the output fields you need, and TaskBot will handle the rest, ensuring you get consistent, machine-readable results every time.</p>
-      </header>
-
+      <ProjectHeader 
+        title="TaskBot"
+        description="Connect to any LLM, define your output, and get structured data for any task."
+      />
       <div className="main-content-grid">
         <form className="taskbot-form" onSubmit={handleSubmit}>
           <div className="form-group-scrollable">
@@ -173,19 +172,19 @@ ${outputFields.map(field => `  <${field.key}>${field.description || 'value'}</${
                       value={field.description}
                       onChange={(e) => handleFieldChange(index, e)}
                     />
-                    <button type="button" className="btn btn-danger" onClick={() => removeField(index)}>
+                    <button type="button" className="remove-button" onClick={() => removeField(index)}>
                       &times;
                     </button>
                   </div>
                 ))}
               </div>
-              <button type="button" className="btn btn-primary" onClick={addField}>
+              <button type="button" className="glass-button add-field-button" onClick={addField}>
                 Add Field
               </button>
             </div>
           </div>
 
-          <button type="submit" className="btn btn-success" disabled={isLoading || !apiConfig}>
+          <button type="submit" className="glass-button-glow submit-button" disabled={isLoading || !apiConfig}>
             {isLoading ? 'Processing...' : 'Process Task'}
           </button>
         </form>
@@ -204,10 +203,10 @@ ${outputFields.map(field => `  <${field.key}>${field.description || 'value'}</${
               <div className="results-header">
                 <h2>Results</h2>
                 <div className="results-actions">
-                  <button className="btn btn-secondary" onClick={() => setIsJsonVisible(!isJsonVisible)}>
+                  <button className="glass-button" onClick={() => setIsJsonVisible(!isJsonVisible)}>
                     {isJsonVisible ? 'Show Table' : 'Show JSON'}
                   </button>
-                  <button className="btn btn-secondary" onClick={handleCopyJson}>Copy JSON</button>
+                  <button className="glass-button" onClick={handleCopyJson}>Copy JSON</button>
                 </div>
               </div>
 

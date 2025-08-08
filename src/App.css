@@ -5,6 +5,7 @@
   --card-border: #444;
   --card-hover-border: #646cff;
   --header-text-color: #ffffff;
+  --glow-border: linear-gradient(120deg, #ff00c1, #9600ff, #4900ff, #00b8ff, #00ffc1, #96ff00, #ffc400, #ff0040, #ff00c1);
 }
 
 body {
@@ -20,10 +21,18 @@ body {
 
 .App {
   text-align: center;
-  padding: 2rem;
+  padding: 0 2rem 2rem 2rem;
   background-color: transparent;
   position: relative;
   overflow: hidden;
+}
+
+.app-header-container {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  padding: 1rem 0;
 }
 
 .interactive-background, .interactive-background2, .interactive-background3 {
@@ -32,7 +41,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: -1;
 }
 
 .interactive-background::before, .interactive-background2::before, .interactive-background3::before {
@@ -67,6 +76,7 @@ body {
 
 .App-header {
   margin-bottom: 4rem;
+  padding-top: 6rem; /* Space for the fixed header */
 }
 
 .App-header h1 {
@@ -89,8 +99,8 @@ body {
 }
 
 .project-card {
-  background-color: var(--card-background);
-  border: 1px solid var(--card-border);
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   padding: 2rem;
   text-decoration: none;
@@ -154,3 +164,81 @@ body {
 .api-config-button:hover svg {
   transform: rotate(45deg);
 }
+
+/* Base Glass Button Style */
+.glass-button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #eee;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.glass-button:disabled {
+  background: rgba(255, 255, 255, 0.05);
+  color: #888;
+  cursor: not-allowed;
+}
+
+/* Glowing Border Button */
+.glass-button-glow {
+  position: relative;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1); /* Glassy background */
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Glassy border */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.glass-button-glow span {
+  position: relative;
+  z-index: 1;
+}
+
+.glass-button-glow::before {
+  content: '';
+  position: absolute;
+  top: -2px; /* Position for border */
+  left: -2px; /* Position for border */
+  width: calc(100% + 4px); /* Size for border */
+  height: calc(100% + 4px); /* Size for border */
+  background: linear-gradient(45deg, #00b8ff, #00ffc1); /* Subtle blue/green glow */
+  border-radius: 8px; /* Match button border-radius */
+  z-index: -1; /* Behind button content */
+  opacity: 0;
+  transition: opacity .3s ease-in-out;
+}
+
+.glass-button-glow:hover::before {
+  opacity: 1;
+}
+
+
+
+.glass-button-glow:disabled {
+  color: #888;
+  cursor: not-allowed;
+}
+
+.glass-button-glow:disabled::before {
+  opacity: 0;
+}
+
+

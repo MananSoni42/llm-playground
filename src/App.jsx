@@ -4,6 +4,7 @@ import './App.css';
 import TaskBot from './TaskBot';
 import TaskBotBatch from './TaskBotBatch';
 import ApiConfig from './ApiConfig';
+import TalkToCharacter from './TalkToCharacter';
 
 const projects = [
   {
@@ -19,7 +20,7 @@ const projects = [
   {
     name: 'Talk to Character',
     description: 'Talk to your favourite book characters, immerse in their universe',
-    path: '/talk_to_character'
+    path: '/talk-to-character'
   },  
 ];
 
@@ -92,6 +93,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/taskbot" element={<TaskBot apiConfig={apiConfig} />} />
         <Route path="/taskbot-batch" element={<TaskBotBatch apiConfig={apiConfig} />} />
+        <Route path="/talk-to-character" element={<TalkToCharacter apiConfig={apiConfig} />} />
       </Routes>
     </div>
   );
