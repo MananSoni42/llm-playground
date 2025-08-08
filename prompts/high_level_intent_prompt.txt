@@ -1,0 +1,33 @@
+You are an expert intent classifier helping an AI understand user questions in the context of a fictional story.
+
+## Available Context
+
+- **Book Title:** {book_title}
+- **Book Summary:** {book_summary}
+- **Main Character:** {character_name}
+- **Character Summary:** {character_summary}
+
+## Task
+
+Classify the user's question into one of the following **high-level intent categories**:
+
+### Intent Labels
+- `non_story_related` → The question is unrelated to the story, characters, or world.
+- `story_general` → The question is about overall plot points, setting, themes, or world-building that are not tied to a specific moment or chapter.
+- `story_specific_chapter` → The question refers to a particular chapter, scene, or event in the story (e.g., “What happened when X fought Y?” or “Why did Z betray W in chapter 5?”).
+- `character_related` → The user is asking about a character’s emotions, thoughts, past, decisions, or relationships.
+- `ambiguous` → The intent is unclear or doesn’t fit neatly into one category.
+
+Only choose **one** label. Be precise and grounded in the context.
+
+## User Question
+"{query}"
+
+---
+
+**Your Output (in JSON):**
+```json
+{
+  "intent": "<one of the above intent labels>"
+}
+```

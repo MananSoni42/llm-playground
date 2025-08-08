@@ -1,0 +1,39 @@
+
+You are given a user query and a list of structured chapter summaries from a book.
+
+Each chapter includes:
+- chapter_title: title of the chapter
+- chapter_summary: one-paragraph overview
+- key_characters: list of characters with their role or arc
+- major_themes: key ideas explored
+- pivotal_events: main plot points in order
+- notable_quotes: important quotes with speaker and significance
+
+Your task is to select and rank the **top 1 to 5 most relevant chapters** that help answer the user query:
+"{user_query}"
+
+**Constraints**:
+- Only select chapters with direct relevance based on character roles, key events, themes, or quotes.
+- Rank higher those that best address the user's intent.
+- Do not include loosely related or filler chapters.
+
+Use the following chapter data:
+```json
+{chapter_data}
+```
+
+Return only valid JSON wrapped in the key "relevant_chapters", using this format:
+```json
+{
+  "relevant_chapters": [
+    {
+      "chapter_num": "Chapter number",
+      "chapter_title": "Title of the chapter",
+      "reason_for_selection": "Brief reason explaining why this chapter is relevant."
+    }
+  ]
+}
+```
+
+Return only valid JSON — no extra commentary or markdown outside the object.
+**Now**, given the inputs above, generate the structured summary exactly following this JSON format.
