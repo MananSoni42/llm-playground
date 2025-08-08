@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import './TaskBot.css';
 
-function TaskBot() {
-  const [apiUrl, setApiUrl] = useState('https://api.openai.com/v1/chat/completions');
-  const [authToken, setAuthToken] = useState('');
+function TaskBot({ apiConfig }) {
   const [taskDescription, setTaskDescription] = useState('');
   const [outputFields, setOutputFields] = useState([{ key: '', description: '' }]);
   const [log, setLog] = useState([]);
   const [resultData, setResultData] = useState(null);
   const [isJsonVisible, setIsJsonVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const logMessage = useCallback((message, type = 'info') => {
+    setLog(prevLog => [...prevLog, { message, type }]);
+  }, []);
+
+  useEffect(() => {
+    if (!apiConfig) {
+      logMessage('API Configuration is not set. Please configure it from the home page.', 'error');
+    }
+  }, [apiConfig, logMessage]);
 
   const handleCopyJson = async () => {
     if (resultData) {
@@ -41,25 +49,27 @@ function TaskBot() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (!apiConfig) {
+      logMessage('Cannot process task: API Configuration is not set.', 'error');
+      return;
+    }
+
     setIsLoading(true);
     setLog([]);
     setResultData(null);
 
-    const logMessage = (message, type = 'info') => {
-        setLog(prevLog => [...prevLog, { message, type }]);
-      };
+    const filledOutputFields = outputFields.filter(field => field.key.trim() !== '');
 
-      const filledOutputFields = outputFields.filter(field => field.key.trim() !== '');
-
-      if (filledOutputFields.length === 0) {
-        logMessage('Error: At least one output field is required', 'error');
-        setIsLoading(false);
-        return;
-      }
+    if (filledOutputFields.length === 0) {
+      logMessage('Error: At least one output field is required', 'error');
+      setIsLoading(false);
+      return;
+    }
 
     const generatePrompt = (taskDescription, outputFields) => {
       const fieldDescriptions = outputFields.map(field => {
-        return `- "${field.key}": ${field.description || 'No description provided'}`;
+        return `- \"${field.key}\": ${field.description || 'No description provided'}`;
       }).join('\n');
 
       return `Task: ${taskDescription}\n\nPlease provide your response as structured data with the following fields:\n${fieldDescriptions}\n\nFormat your response as XML with each field wrapped in its own tag like this:
@@ -72,14 +82,14 @@ ${outputFields.map(field => `  <${field.key}>${field.description || 'value'}</${
 
     try {
       logMessage('Sending request to API...');
-      const response = await fetch(apiUrl, {
+      const response = await fetch(apiConfig.apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
+          'Authorization': `Bearer ${apiConfig.apiKey}`,
         },
         body: JSON.stringify({
-          model: "gpt-3.5-turbo",
+          model: apiConfig.model,
           messages: [
             { role: "system", content: "You are a helpful assistant that generates structured outputs." },
             { role: "user", content: prompt },
@@ -136,54 +146,46 @@ ${outputFields.map(field => `  <${field.key}>${field.description || 'value'}</${
 
       <div className="main-content-grid">
         <form className="taskbot-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="api-url">API URL</label>
-            <input type="text" id="api-url" className="form-control" value={apiUrl} onChange={(e) => setApiUrl(e.target.value)} />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="auth-token">Auth Token</label>
-            <input type="password" id="auth-token" className="form-control" value={authToken} onChange={(e) => setAuthToken(e.target.value)} />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="task-description">Task Description</label>
-            <textarea id="task-description" className="form-control" rows="3" value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)}></textarea>
-          </div>
-
-          <div className="form-group">
-            <label>Output Fields</label>
-            <div className="output-field-wrapper">
-              {outputFields.map((field, index) => (
-                <div className="output-field" key={index}>
-                  <input
-                    type="text"
-                    name="key"
-                    className="form-control"
-                    placeholder="Key"
-                    value={field.key}
-                    onChange={(e) => handleFieldChange(index, e)}
-                  />
-                  <input
-                    type="text"
-                    name="description"
-                    className="form-control"
-                    placeholder="Description (optional)"
-                    value={field.description}
-                    onChange={(e) => handleFieldChange(index, e)}
-                  />
-                  <button type="button" className="btn btn-danger" onClick={() => removeField(index)}>
-                    &times;
-                  </button>
-                </div>
-              ))}
+          <div className="form-group-scrollable">
+            <div className="form-group">
+              <label htmlFor="task-description">Task Description</label>
+              <textarea id="task-description" className="form-control" rows="3" value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)}></textarea>
             </div>
-            <button type="button" className="btn btn-primary" onClick={addField}>
-              Add Field
-            </button>
+
+            <div className="form-group output-fields-container">
+              <label>Output Fields</label>
+              <div className="output-field-wrapper">
+                {outputFields.map((field, index) => (
+                  <div className="output-field" key={index}>
+                    <input
+                      type="text"
+                      name="key"
+                      className="form-control"
+                      placeholder="Key"
+                      value={field.key}
+                      onChange={(e) => handleFieldChange(index, e)}
+                    />
+                    <input
+                      type="text"
+                      name="description"
+                      className="form-control"
+                      placeholder="Description (optional)"
+                      value={field.description}
+                      onChange={(e) => handleFieldChange(index, e)}
+                    />
+                    <button type="button" className="btn btn-danger" onClick={() => removeField(index)}>
+                      &times;
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button type="button" className="btn btn-primary" onClick={addField}>
+                Add Field
+              </button>
+            </div>
           </div>
 
-          <button type="submit" className="btn btn-success" disabled={isLoading}>
+          <button type="submit" className="btn btn-success" disabled={isLoading || !apiConfig}>
             {isLoading ? 'Processing...' : 'Process Task'}
           </button>
         </form>

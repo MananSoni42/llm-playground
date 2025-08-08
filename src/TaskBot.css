@@ -38,7 +38,7 @@
 }
 
 /* Styling for the two main panels (form and right column) */
-.taskbot-form, .right-column {
+.taskbot-form {
   background-color: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -48,6 +48,21 @@
   flex-direction: column;
   gap: 1.5rem; /* Adds space between child elements */
   padding: 1.5rem;
+}
+
+.form-group-scrollable {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-right: 0.5rem; /* For scrollbar spacing */
+}
+
+.output-fields-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .taskbot-form .form-group {

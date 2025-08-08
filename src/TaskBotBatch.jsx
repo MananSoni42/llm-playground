@@ -1,11 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Papa from 'papaparse';
 import './TaskBotBatch.css';
 
-function TaskBotBatch() {
-  const [apiUrl, setApiUrl] = useState('https://api.openai.com/v1/chat/completions');
-  const [authToken, setAuthToken] = useState('');
+function TaskBotBatch({ apiConfig }) {
   const [taskDescription, setTaskDescription] = useState('Extract the output below from the provided text');
   const [outputFields, setOutputFields] = useState([{ key: '', description: '' }]);
   const [csvFile, setCsvFile] = useState(null);
@@ -23,6 +21,12 @@ function TaskBotBatch() {
   const logStatus = useCallback((message, type = 'info') => {
     setLog(prevLog => [{ message, type, timestamp: new Date() }, ...prevLog]);
   }, []);
+
+  useEffect(() => {
+    if (!apiConfig) {
+      logStatus('API Configuration is not set. Please configure it from the home page.', 'error');
+    }
+  }, [apiConfig, logStatus]);
 
   const addOutputField = () => {
     setOutputFields([...outputFields, { key: '', description: '' }]);
@@ -65,6 +69,11 @@ function TaskBotBatch() {
   };
 
   const handleGenerateTemplate = async () => {
+    if (!apiConfig) {
+      logStatus('Cannot generate template: API Configuration is not set.', 'error');
+      return;
+    }
+
     if (!csvFile || !taskDescription) {
       logStatus('Please upload a CSV and provide a task description first.', 'error');
       return;
@@ -77,7 +86,7 @@ function TaskBotBatch() {
     const sampleData = Papa.unparse(csvData.slice(0, 2), { header: true });
 
     const outputFieldsDescription = outputFields.map(field => {
-      return `- ${field.key}: ${field.description || 'No description provided.'}`;
+      return `- "${field.key}": ${field.description || 'No description provided.'}`;
     }).join('\n');
 
     const suggestionsPrompt = `
@@ -131,14 +140,17 @@ Provide your response in XML format like this:
   };
 
   const callLLMAPI = async (prompt) => {
-    const response = await fetch(apiUrl, {
+    if (!apiConfig) {
+        throw new Error("API configuration is missing.");
+    }
+    const response = await fetch(apiConfig.apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`,
+        'Authorization': `Bearer ${apiConfig.apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-3.5-turbo",
+        model: apiConfig.model,
         messages: [{ role: "user", content: prompt }],
         temperature: 0.3,
       }),
@@ -166,6 +178,11 @@ Provide your response in XML format like this:
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (!apiConfig) {
+        logStatus('Cannot process task: API Configuration is not set.', 'error');
+        return;
+    }
 
     if (!csvData.length) {
       logStatus('Please upload a CSV file.', 'error');
@@ -242,14 +259,6 @@ Provide your response in XML format like this:
         <form className="taskbot-form" onSubmit={handleSubmit}>
           <div className="form-content-wrapper">
             <div className="form-group">
-              <label htmlFor="api-url">API URL</label>
-              <input type="url" id="api-url" className="form-control" value={apiUrl} onChange={(e) => setApiUrl(e.target.value)} placeholder="https://api.example.com/v1/chat/completions" required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="auth-token">Auth Token</label>
-              <input type="password" id="auth-token" className="form-control" value={authToken} onChange={(e) => setAuthToken(e.target.value)} placeholder="Your API auth token" />
-            </div>
-            <div className="form-group">
               <label htmlFor="task-description">Task Description</label>
               <textarea id="task-description" className="form-control" rows="3" value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)} placeholder="Describe the task for the AI..." required></textarea>
             </div>
@@ -271,7 +280,7 @@ Provide your response in XML format like this:
             </div>
           </div>
 
-          <button type="submit" className="btn btn-success" disabled={isProcessing || csvData.length === 0}>
+          <button type="submit" className="btn btn-success" disabled={isProcessing || csvData.length === 0 || !apiConfig}>
             {isProcessing ? `Processing... ${progress}%` : 'Process Batch'}
           </button>
         </form>
@@ -282,7 +291,7 @@ Provide your response in XML format like this:
               <div className="template-container">
                 <div className="form-group">
                   <label htmlFor="prompt-template">Generate prompt template (editable):</label>
-                  <button type="button" className="btn btn-primary" onClick={handleGenerateTemplate} disabled={isSuggesting || !csvFile || !taskDescription}>
+                  <button type="button" className="btn btn-primary" onClick={handleGenerateTemplate} disabled={isSuggesting || !csvFile || !taskDescription || !apiConfig}>
                     {isSuggesting ? 'Generating...' : 'Generate Prompt Template'}
                   </button>
                   <textarea id="prompt-template" className="form-control" rows="10" value={promptTemplate} onChange={(e) => setPromptTemplate(e.target.value)}></textarea>
