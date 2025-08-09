@@ -1,19 +1,19 @@
-.taskbot-batch-container {
+.structura-container {
     padding: 2rem;
     padding-top: 7rem; /* Space for fixed header */
-    max-width: 1600px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
 .main-content-grid {
     display: grid;
-    grid-template-columns: 1fr 1.2fr;
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
     align-items: start;
     margin-top: 2rem; /* Added space below ProjectHeader */
 }
 
-.taskbot-form {
+.structura-form {
     background: rgba(255, 255, 255, 0.05);
     padding: 2rem;
     border-radius: 12px;
@@ -23,10 +23,11 @@
     height: 100%;
 }
 
-.form-content-wrapper {
+.form-group-scrollable {
     overflow-y: auto;
     flex-grow: 1;
     padding-right: 1rem;
+    margin-right: -1rem;
 }
 
 .form-group {
@@ -52,7 +53,7 @@
 
 textarea.form-control {
     resize: vertical;
-    min-height: 80px;
+    min-height: 100px;
 }
 
 .output-field {
@@ -90,92 +91,75 @@ textarea.form-control {
     flex-direction: column;
     gap: 2rem;
     height: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 2rem;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.right-column-main-content {
-    flex-grow: 1;
-}
-
-.template-container .form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.template-container .generate-button {
-    margin-bottom: 1rem;
-    align-self: flex-start;
-}
-
-.available-columns {
-    font-size: 0.9rem;
-    color: #aaa;
-    margin-top: 0.5rem;
-}
-.available-columns code {
-    background: rgba(0,0,0,0.3);
-    padding: 2px 5px;
-    border-radius: 4px;
-    margin: 0 2px;
-}
-
-.results-container h2 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-}
-
-.csv-preview {
-    max-height: 400px;
-    overflow: auto;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    margin-bottom: 1rem;
-}
-
-.csv-preview table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.csv-preview th, .csv-preview td {
-    padding: 0.8rem;
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    white-space: nowrap;
-}
-
-.csv-preview th {
-    background-color: rgba(255, 255, 255, 0.1);
-    position: sticky;
-    top: 0;
 }
 
 .status-log {
     background: rgba(255, 255, 255, 0.05);
     padding: 1.5rem;
     border-radius: 12px;
-    height: 150px;
+    height: 200px;
     overflow-y: auto;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    flex-shrink: 0;
 }
 
 .log-entry {
     margin-bottom: 0.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.9rem;
 }
 .log-entry:last-child {
     border-bottom: none;
 }
-.log-timestamp {
-    color: #aaa;
-    margin-right: 1rem;
-}
 .log-success { color: #81c784; }
 .log-error { color: #ff8a80; }
 .log-info { color: #64b5f6; }
+
+.results-container {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    flex-grow: 1;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.results-header h2 {
+    margin: 0;
+    color: #fff;
+}
+
+.results-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.json-result {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: left;
+}
+
+.table-result {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-result th, .table-result td {
+    padding: 0.8rem;
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.table-result th {
+    background-color: rgba(255, 255, 255, 0.1);
+}

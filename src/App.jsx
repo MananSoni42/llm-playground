@@ -1,26 +1,26 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import './App.css';
-import TaskBot from './TaskBot';
-import TaskBotBatch from './TaskBotBatch';
+import Structura from './Structura';
+import StructuraBulk from './StructuraBulk';
 import ApiConfig from './ApiConfig';
-import TalkToCharacter from './TalkToCharacter';
+import Storybound from './Storybound';
 
 const projects = [
   {
-    name: 'TaskBot',
-    description: 'Connect to any LLM, define your output, and get structured data for any task.',
-    path: '/taskbot'
+    name: 'Structura',
+    description: 'Tame the AI, get perfect structure.',
+    path: '/structura'
   },
   {
-    name: 'TaskBot [Batch]',
-    description: 'Process a CSV of inputs against an LLM in a single batch operation.',
-    path: '/taskbot-batch'
+    name: 'Structura Bulk',
+    description: 'LLM power, spreadsheet speed.',
+    path: '/structura-bulk'
   },
   {
-    name: 'Talk to Character',
-    description: 'Talk to your favourite book characters, immerse in their universe',
-    path: '/talk-to-character'
+    name: 'Storybound',
+    description: 'Step into story — talk to the cast.',
+    path: '/storybound'
   },  
 ];
 
@@ -91,9 +91,9 @@ function App() {
       )}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/taskbot" element={<TaskBot apiConfig={apiConfig} />} />
-        <Route path="/taskbot-batch" element={<TaskBotBatch apiConfig={apiConfig} />} />
-        <Route path="/talk-to-character" element={<TalkToCharacter apiConfig={apiConfig} />} />
+        <Route path="/structura" element={<Structura apiConfig={apiConfig} />} />
+        <Route path="/structura-bulk" element={<StructuraBulk apiConfig={apiConfig} />} />
+        <Route path="/storybound" element={<Storybound apiConfig={apiConfig} />} />
       </Routes>
     </div>
   );

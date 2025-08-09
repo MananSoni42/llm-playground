@@ -1,10 +1,10 @@
-.talk-to-character-container {
+.storybound-container {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.talk-to-character {
+.storybound {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -132,6 +132,7 @@
   white-space: pre-wrap;
   font-family: inherit;
   margin: 0;
+  text-align: left;
 }
 
 .message.user {
@@ -141,6 +142,14 @@
   margin-left: auto;
   border-bottom-right-radius: 4px;
   border-color: transparent;
+}
+
+.message.assistant {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  align-self: flex-start;
+  margin-right: auto;
+  border-bottom-left-radius: 4px;
 }
 
 .message.assistant.loading::after {

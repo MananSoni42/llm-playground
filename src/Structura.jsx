@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './TaskBot.css';
+import './Structura.css';
 import ProjectHeader from './ProjectHeader';
 
-function TaskBot({ apiConfig }) {
+function Structura({ apiConfig }) {
   const [taskDescription, setTaskDescription] = useState('');
   const [outputFields, setOutputFields] = useState([{ key: '', description: '' }]);
   const [log, setLog] = useState([]);
@@ -138,13 +138,13 @@ ${outputFields.map(field => `  <${field.key}>${field.description || 'value'}</${
   };
 
   return (
-    <div className="content taskbot-container">
+    <div className="content structura-container">
       <ProjectHeader 
-        title="TaskBot"
-        description="Connect to any LLM, define your output, and get structured data for any task."
+        title="Structura"
+        description="A tool to connect with any LLM, define your desired output schema, and get perfectly structured results every time—no matter the task."
       />
       <div className="main-content-grid">
-        <form className="taskbot-form" onSubmit={handleSubmit}>
+        <form className="structura-form" onSubmit={handleSubmit}>
           <div className="form-group-scrollable">
             <div className="form-group">
               <label htmlFor="task-description">Task Description</label>
@@ -238,4 +238,4 @@ ${outputFields.map(field => `  <${field.key}>${field.description || 'value'}</${
   );
 }
 
-export default TaskBot;
+export default Structura;

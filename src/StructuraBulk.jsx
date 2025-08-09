@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import Papa from 'papaparse';
-import './TaskBotBatch.css';
+import './StructuraBulk.css';
 import ProjectHeader from './ProjectHeader';
 
-function TaskBotBatch({ apiConfig }) {
+function StructuraBulk({ apiConfig }) {
   const [taskDescription, setTaskDescription] = useState('Extract the output below from the provided text');
   const [outputFields, setOutputFields] = useState([{ key: '', description: '' }]);
   const [csvFile, setCsvFile] = useState(null);
@@ -248,13 +248,13 @@ Provide your response in XML format like this:
   };
 
   return (
-    <div className="taskbot-batch-container">
+    <div className="structura-bulk-container">
       <ProjectHeader 
-        title="TaskBot [Batch]"
-        description="Process a CSV of inputs against an LLM in a single batch operation."
+        title="Structura Bulk"
+        description="Process entire CSV files of prompts in one go. Feed it your data, run it through your chosen LLM, and get structured outputs for every row—fast and consistent."
       />
       <div className="main-content-grid">
-        <form className="taskbot-form" onSubmit={handleSubmit}>
+        <form className="structura-form" onSubmit={handleSubmit}>
           <div className="form-content-wrapper">
             <div className="form-group">
               <label htmlFor="task-description">Task Description</label>
@@ -337,4 +337,4 @@ Provide your response in XML format like this:
   );
 }
 
-export default TaskBotBatch;
+export default StructuraBulk;

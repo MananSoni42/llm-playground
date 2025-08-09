@@ -1,12 +1,42 @@
-# React + Vite
+# LLM Playground
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A collection of interactive applications built to explore and demonstrate the capabilities of Large Language Models (LLMs).
 
-Currently, two official plugins are available:
+## Projects
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Structura
+**Tame the AI, get perfect structure:** A tool to connect with any LLM, define your desired output schema, and get perfectly structured results every time—no matter the task.
 
-## Expanding the ESLint configuration
+### Structura Bulk
+**LLM power, spreadsheet speed:** Process entire CSV files of prompts in one go. Feed it your data, run it through your chosen LLM, and get structured outputs for every row—fast and consistent.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Storybound
+**Step into story — talk to the cast:** Interact with characters that remember events and relationships from their books, useful for roleplay, teaching, or writing sparring partners.
+
+## Getting Started
+
+To run this project locally, follow these steps:
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd llm-playground
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:5173`.
+
+4.  **Configure your API Key:**
+    Click the gear icon in the top left corner to add your API key from providers like Google, Anthropic, or OpenAI. This is required for the applications to function.
+
+## Background
+
+These projects originally started as Python scripts and Jupyter notebooks. They have since been ported to this interactive web format. The website was completely vibe-coded using the Gemini CLI.

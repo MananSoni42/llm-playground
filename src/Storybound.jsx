@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './TalkToCharacter.css';
+import './Storybound.css';
 import ProjectHeader from './ProjectHeader';
 
 const books = [
@@ -8,7 +8,7 @@ const books = [
   'study_in_scarlet'
 ];
 
-function TalkToCharacter({ apiConfig }) {
+function Storybound({ apiConfig }) {
   const [book, setBook] = useState(books[0]);
   const [bookData, setBookData] = useState(null);
   const [characterName, setCharacterName] = useState(null);
@@ -295,11 +295,11 @@ function TalkToCharacter({ apiConfig }) {
 
   if (!selectionComplete) {
     return (
-      <div className="talk-to-character-container">
+      <div className="storybound-container">
       <ProjectHeader 
-        title="Talk to Character"
-        description="Talk to your favourite book characters, immerse in their universe"
-        className="talk-to-character-header"
+        title="Storybound"
+        description="Interact with characters that remember events and relationships from their books, useful for roleplay, teaching, or writing sparring partners."
+        className="storybound-header"
       />
       <div className="selection-container">
         {error && <div className="error-message">{error}</div>}
@@ -348,13 +348,13 @@ function TalkToCharacter({ apiConfig }) {
   }
 
   return (
-    <div className="talk-to-character-container">
+    <div className="storybound-container">
       <ProjectHeader 
         title={characterName}
         description={selectedCharacterRole}
         onBackClick={() => setSelectionComplete(false)}
       />
-      <div className={`talk-to-character book-${book}`}>
+      <div className={`storybound book-${book}`}>
         <div className="chat-area">
           <div className="logs-area">
             <h3>Logs</h3>
@@ -392,4 +392,4 @@ function TalkToCharacter({ apiConfig }) {
   );
 }
 
-export default TalkToCharacter;
+export default Storybound;
