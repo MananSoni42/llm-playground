@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './ApiConfig.css';
 
 const modelOptions = {
-  google: ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-embedding-001'],
-  anthropic: ['claude-opus-4-1-20250805', 'claude-sonnet-4-20250514', 'claude-3.5-sonnet'],
-  openai: ['gpt-5', 'gpt-5-mini', 'gpt-4o-mini-tts', 'dalle-3'],
+  google: ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-pro', 'gemini-2.0-flash'],
+  anthropic: ['claude-opus-4-1-20250805', 'claude-sonnet-4-20250514', 'claude-3.5-sonnet', 'claude-3.5-haiku', 'claude-3-opus'],
+  openai: ['gpt-5', 'gpt-5-mini', 'o3', 'o4-mini', 'gpt-4.1'],
   local: [],
   custom: [],
 };
@@ -34,7 +34,7 @@ const ApiConfig = ({ onSave, onClose }) => {
     let url = '';
     switch (provider) {
       case 'google':
-        url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        url = 'https://generativelanguage.googleapis.com/v1beta/openai/';
         break;
       case 'anthropic':
         url = 'https://api.anthropic.com/v1/messages';

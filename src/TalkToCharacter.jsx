@@ -18,6 +18,7 @@ function TalkToCharacter({ apiConfig }) {
   const [loading, setLoading] = useState(true);
   const [prompts, setPrompts] = useState({});
   const [selectionComplete, setSelectionComplete] = useState(false);
+  const [logs, setLogs] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -83,23 +84,59 @@ function TalkToCharacter({ apiConfig }) {
       return null;
     }
 
-    const body = {
-      contents: userMessages.map(msg => ({
-        role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.content }]
-      })),
-      system_instruction: {
-        parts: [{ text: systemInstruction }]
-      },
-      generationConfig: {
-        temperature,
-        maxOutputTokens: max_tokens,
-      }
-    };
+    let body;
+    let headers = { 'Content-Type': 'application/json' };
+    let url = apiConfig.apiUrl;
 
-    const response = await fetch(`${apiConfig.apiUrl}?key=${apiConfig.apiKey}`, {
+    switch (apiConfig.provider) {
+      case 'google':
+        body = {
+          contents: userMessages.map(msg => ({
+            role: msg.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: msg.content }]
+          })),
+          system_instruction: {
+            parts: [{ text: systemInstruction }]
+          },
+          generationConfig: {
+            temperature,
+            maxOutputTokens: max_tokens,
+          }
+        };
+        url = `${apiConfig.apiUrl}?key=${apiConfig.apiKey}`;
+        break;
+      case 'anthropic':
+        headers['x-api-key'] = apiConfig.apiKey;
+        headers['anthropic-version'] = '2023-06-01';
+        body = {
+          model: apiConfig.model,
+          messages: userMessages,
+          system: systemInstruction,
+          max_tokens: max_tokens,
+          temperature: temperature,
+        };
+        break;
+      case 'openai':
+      case 'local':
+        headers['Authorization'] = `Bearer ${apiConfig.apiKey}`;
+        body = {
+          model: apiConfig.model,
+          messages: [
+            { role: 'system', content: systemInstruction },
+            ...userMessages
+          ],
+          max_tokens: max_tokens,
+          temperature: temperature,
+        };
+        break;
+      default:
+        setError("Unsupported API provider");
+        return null;
+    }
+
+    const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify(body),
     });
 
@@ -111,7 +148,19 @@ function TalkToCharacter({ apiConfig }) {
     }
 
     const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
+
+    switch (apiConfig.provider) {
+        case 'google':
+            return data.candidates[0].content.parts[0].text;
+        case 'anthropic':
+            return data.content[0].text;
+        case 'openai':
+        case 'local':
+            return data.choices[0].message.content;
+        default:
+            setError("Unsupported API provider");
+            return null;
+    }
   };
 
   const getLlmOutputWithRetry = async (userMessages, systemInstruction, max_retries = 2) => {
@@ -153,7 +202,7 @@ function TalkToCharacter({ apiConfig }) {
     );
 
     const intent = intentResult.intent || 'n/a';
-    console.log('Intent:', intent);
+    const newLog = { intent, chapter: null, characters: [] };
 
     let extra_content = '';
     if (intent === 'character_related') {
@@ -162,6 +211,7 @@ function TalkToCharacter({ apiConfig }) {
       bookData.characters.forEach(character => {
         extra_content += JSON.stringify(character, null, 2) + '\n\n';
       });
+      newLog.characters = bookData.characters.map(c => c.name);
     } else if (intent === 'story_general') {
       extra_content = JSON.stringify(bookData.summary, null, 2);
     } else if (intent === 'story_specific_chapter') {
@@ -176,7 +226,10 @@ function TalkToCharacter({ apiConfig }) {
         chapter_info => bookData.chapters[chapter_info.chapter_num - 1]
       );
       extra_content = relevantChapters.length > 0 ? JSON.stringify(relevantChapters, null, 2) : 'n/a';
+      newLog.chapter = relevantChapters.map(c => c.number).join(', ');
     }
+
+    setLogs([newLog, ...logs]);
 
     const systemPrompt = prompts.character_system_prompt
       .replace('{character_name}', characterData.name)
@@ -212,25 +265,43 @@ function TalkToCharacter({ apiConfig }) {
 
     const response = await getOutput(input, messages);
     if (response) {
-      setMessages([...newMessages, { role: 'assistant', content: response }]);
+      const characterData = bookData.characters.find(c => c.name === characterName);
+      let processedResponse = response;
+
+      // Remove everything before the first colon if it's within the first 20 characters
+      const firstColonIndex = processedResponse.indexOf(':');
+      if (firstColonIndex !== -1 && firstColonIndex < 50) {
+        processedResponse = processedResponse.substring(firstColonIndex + 1);
+      }
+
+      // Remove "{character_name}:" or actual character name from the beginning
+      const regex = new RegExp(`^(${characterName}|\{character_name\}):\s*`, 'i');
+      processedResponse = processedResponse.replace(regex, '');
+
+      // Remove leading/trailing empty lines
+      processedResponse = processedResponse.split('\n').filter(line => line.trim() !== '').join('\n');
+
+      setMessages([...newMessages, { role: 'assistant', content: processedResponse }]);
     }
     setLoading(false);
   };
 
   const handleStartChat = () => {
     if (bookData && characterName) {
+      setMessages([]);
       setSelectionComplete(true);
     }
   };
 
   if (!selectionComplete) {
     return (
+      <div className="talk-to-character-container">
+      <ProjectHeader 
+        title="Talk to Character"
+        description="Talk to your favourite book characters, immerse in their universe"
+        className="talk-to-character-header"
+      />
       <div className="selection-container">
-        <ProjectHeader 
-          title="Talk to Character"
-          description="Talk to your favourite book characters, immerse in their universe"
-          className="talk-to-character-header"
-        />
         {error && <div className="error-message">{error}</div>}
         <div className="selection-controls">
           <div className="setting">
@@ -272,36 +343,49 @@ function TalkToCharacter({ apiConfig }) {
           {loading ? 'Loading Assets...' : 'Start Chat'}
         </button>
       </div>
+    </div>
     );
   }
 
   return (
-    <div className={`talk-to-character book-${book}`}>
+    <div className="talk-to-character-container">
       <ProjectHeader 
         title={characterName}
         description={selectedCharacterRole}
         onBackClick={() => setSelectionComplete(false)}
       />
-      <div className="chat-area">
-        <div className="messages">
-          {messages.map((msg, index) => (
-            <div key={index} className={`message ${msg.role}`}>
-              <pre>{msg.content}</pre>
-            </div>
-          ))}
-          {loading && <div className="message assistant">...</div>}
-          {error && <div className="message error">{error}</div>}
-        </div>
-        <div className="input-area">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            placeholder={`Message ${characterName}...`}
-            disabled={loading || Object.keys(prompts).length === 0}
-          />
-          <button onClick={handleSend} className="glass-button-glow" disabled={loading || Object.keys(prompts).length === 0}>Send</button>
+      <div className={`talk-to-character book-${book}`}>
+        <div className="chat-area">
+          <div className="logs-area">
+            <h3>Logs</h3>
+            {logs.map((log, index) => (
+              <div key={index} className="log-item">
+                <p><strong>Intent:</strong> {log.intent}</p>
+                {log.chapter && <p><strong>Chapter:</strong> {log.chapter}</p>}
+                {log.characters.length > 0 && <p><strong>Characters:</strong> {log.characters.join(', ')}</p>}
+              </div>
+            ))}
+          </div>
+          <div className="messages">
+            {messages.map((msg, index) => (
+              <div key={index} className={`message ${msg.role}`}>
+                <pre>{msg.content}</pre>
+              </div>
+            ))}
+            {loading && <div className="message assistant">...</div>}
+            {error && <div className="message error">{error}</div>}
+          </div>
+          <div className="input-area">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              placeholder={`Message ${characterName}...`}
+              disabled={loading || Object.keys(prompts).length === 0}
+            />
+            <button onClick={handleSend} className="glass-button-glow" disabled={loading || Object.keys(prompts).length === 0}>Send</button>
+          </div>
         </div>
       </div>
     </div>
