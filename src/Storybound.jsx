@@ -35,8 +35,9 @@ function Storybound({ apiConfig }) {
           'character_prompt'
         ];
         const fetchedPrompts = {};
+        const baseUrl = import.meta.env.BASE_URL;
         for (const name of promptNames) {
-          const response = await fetch(`/prompts/${name}.txt`);
+          const response = await fetch(`${baseUrl}prompts/${name}.txt`);
           if (!response.ok) {
             throw new Error(`Failed to fetch prompt: ${name}`);
           }
@@ -56,7 +57,8 @@ function Storybound({ apiConfig }) {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(`/talk_to_character/books/${book}.json`);
+        const baseUrl = import.meta.env.BASE_URL;
+        const response = await fetch(`${baseUrl}talk_to_character/books/${book}.json`);
         if (!response.ok) {
           throw new Error(`Failed to fetch book data for: ${book}`);
         }
